@@ -2,68 +2,68 @@
 const questions = {
     P1: [
         {
-            title: "Critical System Outage",
-            description: "Customer reports that the entire application is down and they cannot access any features. Multiple users are affected and business operations have stopped.",
+            title: "Urgent License issue",
+            description: "Customer - URGENT: We restarted our Tyk Dashboard and Gateway nodes this morning for routine OS patching, and now the Dashboard is completely inaccessible. The Gateway is also refusing to start up. The logs are repeatedly printing License expired. All our APIs are down!",
             answers: [
-                "Ask the customer to restart their browser and try again",
-                "Immediately escalate to the engineering team and post a status page update",
-                "Schedule a call with the customer for next week to discuss the issue",
-                "Send them a link to our FAQ section"
+                "A) The Redis database has been flushed and lost all data.",
+                "B) The Tyk Enterprise license key has passed its expiration date.",
+                "C) The Gateway is using the wrong MongoDB connection string.",
+                "D) The API keys for all users have expired simultaneously."
             ],
-            correct: 1,
-            explanation: "For P1 critical issues affecting multiple users, immediate escalation and transparent communication through status updates is essential."
+            correct: 2,
+            explanation: "Tyk Enterprise components require a valid license key to operate. If the license expires, the Dashboard will become inaccessible and the Gateway will refuse to start up. The immediate fix is to obtain a renewed license key from your Tyk Account Manager and update the configuration files (tyk_analytics.conf and tyk.conf)."
         },
         {
-            title: "Database Connection Failure",
-            description: "Multiple customers reporting they cannot save their work due to database connection errors. The issue started 5 minutes ago.",
+            title: "Architecture & Performance",
+            description: "URGENT: All our APIs are suddenly experiencing 5000ms+ latency and random 500 errors. Upstream services are fine (responding in 50ms). Gateway logs are flooded with 'Redis connection timeout'.",
             answers: [
-                "Tell customers to try again later",
-                "Immediately alert the on-call engineer and investigate database status",
-                "Create a knowledge base article about the issue",
-                "Ask customers for more details about their setup"
+                "A) The upstream server is throttling Tyk.",
+                "B) Redis is saturated or OOM, causing Tyk's rate-limiting and token-checking operations to block.",
+                "C) The Dashboard is down, so the Gateway paused traffic.",
+                "D) Tyk Pump is deleting keys from Redis too quickly."
             ],
-            correct: 1,
-            explanation: "Database issues affecting multiple customers require immediate technical intervention and alerting the on-call team."
+            correct: 2,
+            explanation: "Tyk Gateway relies heavily on Redis for token validation, rate limiting, and quotas on every single request. If Redis becomes a bottleneck, runs out of memory, or network latency to Redis spikes, it directly impacts the Gateway's request processing time, leading to high latency and timeouts for all API calls."
         }
     ],
     P2: [
         {
-            title: "Payment Processing Issue",
-            description: "A customer cannot complete their subscription payment. They've tried multiple cards and browsers. Other payment features seem to be working.",
+            title: "Endpoint Security & Routing",
+            description: "Hi Support, we have an API with 10 endpoints. We added an 'Allow List' (White-list) rule to 9 of them because we wanted to restrict them to specific IP ranges. We intentionally left the 10th endpoint (/status) alone because it should be completely public. But now, whenever anyone calls /status, Tyk returns a '403 Forbidden' error. We didn't add a block list to it, so why is it failing?",
             answers: [
-                "Ask them to try again tomorrow",
-                "Check payment processor status and escalate to payments team if needed",
-                "Suggest they contact their bank",
-                "Offer them a free trial extension while investigating the issue"
+                "A) The /status endpoint requires a mock response plugin to function alongside secured endpoints.",
+                "B) The API is in Keyless mode, which automatically disables unlisted endpoints.",
+                "C) Defining an Allow List on an API implicitly blocks all endpoints that are not explicitly on the list.",
+                "D) The Gateway's Redis cache has stale routing data and needs to be flushed."
             ],
             correct: 3,
-            explanation: "For payment issues, provide immediate relief to the customer while investigating the root cause with the payments team."
+            explanation: "C. In Tyk, the Allow List (White-list) middleware operates at the API level. Once you add an Allow List rule to any endpoint, the API's routing shifts from a 'default allow' to a 'default deny' posture. Any endpoint not explicitly added to the Allow List will be automatically blocked by the Gateway, even if it has no plugins attached to it."
         },
         {
-            title: "Feature Not Working",
-            description: "Customer reports that the export feature is not working properly. Files are being corrupted during export. This affects their daily workflow.",
+            title: "Gateway Configuration",
+            description: "We updated an API definition in the Dashboard to change the target URL, but the Gateway isn't picking up the changes. We waited 5 minutes. The Gateway logs show 'Failed to load API'.",
             answers: [
-                "Tell them to use a different browser",
-                "Escalate to product team and provide a workaround if available",
-                "Ask them to provide more screenshots",
-                "Suggest they use a different feature instead"
+                "A) The Gateway node is not connected to the Dashboard.",
+                "B) The API definition contains an invalid listen path that conflicts with another active API.",
+                "C) The Gateway needs a hard restart to pick up Dashboard changes.",
+                "D) The Dashboard license is invalid."
             ],
-            correct: 1,
-            explanation: "High priority functional issues should be escalated to the product team while offering workarounds to minimize customer impact."
+            correct: 2,
+            explanation: "B. If an updated API has a listen path that exactly matches another active API, the Gateway will fail to load it during the hot reload process to prevent routing conflicts. It logs an error and keeps the old, working configuration running in memory."
         }
     ],
     P3: [
         {
-            title: "UI Display Issue",
-            description: "Customer reports that some buttons appear misaligned on their dashboard. The functionality works but the appearance is unprofessional.",
+            title: "Authentication",
+            description: "We generated a standard Tyk auth token via the Dashboard, but when we pass it in the Authorization header to our new billing API, the gateway returns 'Key not authorized'.",
             answers: [
-                "Ignore it since functionality works",
-                "Log the issue for the next design sprint and provide a temporary workaround",
-                "Ask them to change their screen resolution",
-                "Tell them it's a known issue with no timeline"
+                "A) The token was generated with Access Rights for a different API ID.",
+                "B) The Gateway is offline.",
+                "C) The token needs to be base64 encoded before being sent.",
+                "D) The API is set to Open (Keyless) mode."
             ],
             correct: 1,
-            explanation: "UI issues should be documented for future fixes while providing workarounds. Good communication about timelines is important."
+            explanation: "A. Tyk tokens are bound to specific APIs via their Access Rights. If a token is generated for the 'Inventory API', the gateway will reject it with 'Key not authorized' if the user attempts to use it against the 'Billing API'."
         },
         {
             title: "Integration Question",
@@ -83,25 +83,25 @@ const questions = {
             title: "Feature Request",
             description: "Customer would like to see dark mode added to the application. They mention it would improve their user experience during night work.",
             answers: [
-                "Tell them it's not possible",
-                "Thank them for the feedback and add it to the product roadmap for consideration",
-                "Suggest they adjust their monitor brightness",
-                "Ask them why they need dark mode"
+                "A) Tell them it's not possible",
+                "B) Thank them for the feedback, check if Feature Request already exist if not create a new one  ",
+                "C) Suggest they adjust their monitor brightness",
+                "D) Ask them why they need dark mode"
             ],
-            correct: 1,
-            explanation: "Feature requests should be acknowledged positively and added to the product roadmap for evaluation by the product team."
+            correct: 2,
+            explanation: "B) Feature requests should be acknowledged positively and added to the product roadmap for evaluation by the product team."
         },
         {
-            title: "General Inquiry",
-            description: "New customer asking about best practices for organizing their workspace and maximizing productivity with our tool.",
+            title: "Developer Portal",
+            description: "Hi Support, a new developer is trying to log into our Tyk Developer Portal but they keep getting a 'Developer not found' error. They just filled out the registration form 5 minutes ago."",
             answers: [
-                "Tell them to figure it out themselves",
-                "Provide helpful resources and offer to schedule an onboarding session",
-                "Send them a link to the user manual",
-                "Ask them to contact sales instead"
+                "A) The portal database is currently down.",
+                "B) The developer hasn't clicked the email verification link yet.",
+                "C) The Tyk Gateway needs a restart to sync portal users.",
+                "D) The developer's IP address is blocked by the Gateway."
             ],
-            correct: 1,
-            explanation: "General inquiries are opportunities to provide excellent customer service and ensure successful product adoption."
+            correct: 2,
+            explanation: "B. In Tyk, newly registered developers must verify their email address before their account becomes active. Until the verification link is clicked, the portal will not recognize their login attempts."
         }
     ]
 };
