@@ -2,7 +2,7 @@
 const questions = {
     P1: [
         {
-            title: "Urgent License issue",
+            title: "Urgent License issue ",
             description: "Customer - URGENT: We restarted our Tyk Dashboard and Gateway nodes this morning for routine OS patching, and now the Dashboard is completely inaccessible. The Gateway is also refusing to start up. The logs are repeatedly printing License expired. All our APIs are down!",
             answers: [
                 "A) The Redis database has been flushed and lost all data.",
