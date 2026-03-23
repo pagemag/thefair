@@ -3,58 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Ticket Challenge</title>
+    <title>Support Ticket Challenge</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎫 CRM Ticket Challenge</h1>
-            <p>Test your problem-solving skills by resolving customer tickets</p>
-        </header>
-
-        <div class="dashboard">
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>Score</h3>
-                    <span id="score">0</span>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <div class="container">
+            <header>
+                <h1>🎫 Support Ticket Challenge</h1>
+                <p>Test your customer support skills by answering tickets across different priority levels</p>
+            </header>
+            
+            <div class="priority-grid">
+                <div class="priority-card p1" onclick="startChallenge('P1')">
+                    <div class="priority-badge p1-badge">P1</div>
+                    <h3>Critical</h3>
+                    <p>System down, urgent issues</p>
+                    <div class="time-limit">⏱️ 30 seconds</div>
+                    <button class="start-btn">Start Challenge</button>
                 </div>
-                <div class="stat-card">
-                    <h3>Solved</h3>
-                    <span id="solved">0</span>
+                
+                <div class="priority-card p2" onclick="startChallenge('P2')">
+                    <div class="priority-badge p2-badge">P2</div>
+                    <h3>High</h3>
+                    <p>Important functionality affected</p>
+                    <div class="time-limit">⏱️ 1 minute</div>
+                    <button class="start-btn">Start Challenge</button>
                 </div>
-                <div class="stat-card">
-                    <h3>Total</h3>
-                    <span id="total">12</span>
+                
+                <div class="priority-card p3" onclick="startChallenge('P3')">
+                    <div class="priority-badge p3-badge">P3</div>
+                    <h3>Medium</h3>
+                    <p>Minor issues, workarounds available</p>
+                    <div class="time-limit">⏱️ 1 min 30 sec</div>
+                    <button class="start-btn">Start Challenge</button>
                 </div>
-            </div>
-
-            <div class="priority-filter">
-                <button class="filter-btn active" data-priority="all">All Tickets</button>
-                <button class="filter-btn p1" data-priority="P1">P1 - Critical</button>
-                <button class="filter-btn p2" data-priority="P2">P2 - High</button>
-                <button class="filter-btn p3" data-priority="P3">P3 - Medium</button>
-                <button class="filter-btn p4" data-priority="P4">P4 - Low</button>
-            </div>
-
-            <div id="ticketContainer" class="ticket-container">
-                <!-- Tickets will be dynamically generated here -->
-            </div>
-
-            <div class="results" id="results" style="display: none;">
-                <h2>Challenge Complete! 🎉</h2>
-                <p>Your final score: <span id="finalScore"></span>/12</p>
-                <button onclick="resetChallenge()" class="reset-btn">Try Again</button>
+                
+                <div class="priority-card p4" onclick="startChallenge('P4')">
+                    <div class="priority-badge p4-badge">P4</div>
+                    <h3>Low</h3>
+                    <p>General inquiries, feature requests</p>
+                    <div class="time-limit">⏱️ 2 minutes</div>
+                    <button class="start-btn">Start Challenge</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for ticket details -->
-    <div id="ticketModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modalBody">
-                <!-- Modal content will be inserted here -->
+    <!-- Question Page -->
+    <div id="question-page" class="page">
+        <div class="container">
+            <div class="question-header">
+                <div class="priority-info">
+                    <span id="current-priority" class="priority-badge"></span>
+                    <span id="ticket-number"></span>
+                </div>
+                <div class="timer-container">
+                    <div id="timer" class="timer">00:30</div>
+                    <div id="timer-bar" class="timer-bar">
+                        <div id="timer-fill" class="timer-fill"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-content">
+                <div class="ticket-info">
+                    <h2 id="question-title"></h2>
+                    <div id="question-description" class="question-description"></div>
+                </div>
+                
+                <div class="answers-container">
+                    <h3>Select the best response:</h3>
+                    <div id="answers-list" class="answers-list"></div>
+                </div>
+            </div>
+            
+            <button id="submit-btn" class="submit-btn" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Page -->
+    <div id="result-page" class="page">
+        <div class="container">
+            <div class="result-content">
+                <div id="result-icon" class="result-icon"></div>
+                <h2 id="result-title"></h2>
+                <div id="result-message" class="result-message"></div>
+                <div id="result-explanation" class="result-explanation"></div>
+                
+                <div class="result-stats">
+                    <div class="stat">
+                        <span class="stat-label">Time Taken:</span>
+                        <span id="time-taken" class="stat-value"></span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Priority Level:</span>
+                        <span id="completed-priority" class="stat-value"></span>
+                    </div>
+                </div>
+                
+                <div class="result-actions">
+                    <button onclick="goHome()" class="btn-secondary">Back to Home</button>
+                    <button onclick="tryAgain()" class="btn-primary">Try Again</button>
+                </div>
             </div>
         </div>
     </div>
